@@ -4,8 +4,14 @@ export abstract class View<T> {
   private _escapar = false;
 
   constructor(seletor: string, escapar?: boolean) {
-    this._elemento = document.querySelector(seletor);
-    this._escapar = escapar && this._escapar;
+    const elemento = document.querySelector(seletor);
+    if (elemento) {
+      this._elemento = elemento as HTMLElement;
+    } else {
+      throw new Error(`Seletor ${seletor} não existe no DOM. Verifique com o desenvolvedor.`);
+    }
+
+    this._escapar = escapar || this._escapar;
   }
 
   protected abstract _template(model: T): string;

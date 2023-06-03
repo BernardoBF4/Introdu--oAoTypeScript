@@ -13,21 +13,24 @@ export class NegociacaoController {
   private _mensagem_view = new MensagemView('#mensagemView');
 
   constructor() {
-    this._input_data = document.querySelector('#data');
-    this._input_quantidade = document.querySelector('#quantidade');
-    this._input_valor = document.querySelector('#valor');
+    this._input_data = document.querySelector('#data') as HTMLInputElement;
+    this._input_quantidade = document.querySelector('#quantidade') as HTMLInputElement;
+    this._input_valor = document.querySelector('#valor') as HTMLInputElement;
 
     this._atualizaView();
   }
 
   public adiciona(): void {
+    /*
+      Cria negociação se for dia útil e atualiza as views
+    */
     const negociacao = Negociacao.criaDe(this._input_data.value, this._input_quantidade.value, this._input_valor.value);
 
     if (negociacao.data.getDay() > DiasDaSemana.DOMINGO && negociacao.data.getDay() < DiasDaSemana.SABADO) {
       this._negociacoes.adiciona(negociacao);
       this._atualizaView();
       this._limparFormulario();
-      this._input_data.focus();
+      this._input_data.focus(); // Coloca focus no input da data quano acaba de atualilizar a view
     } else {
       this._mensagem_view.update('Apenas negociações em dias úteis são aceitas.');
     }
