@@ -1,3 +1,4 @@
+import { logarTempoDeExecucao } from "../decorators/logar-tempo-de-execucao.js";
 import { DiasDaSemana } from "../enums/dias-da-semana.js";
 import { Negociacao } from "../models/negociacao.js"
 import { Negociacoes } from "../models/negociacoes.js";
@@ -20,6 +21,7 @@ export class NegociacaoController {
     this._atualizaView();
   }
 
+  @logarTempoDeExecucao()
   public adiciona(): void {
     /*
       Cria negociação se for dia útil e atualiza as views
