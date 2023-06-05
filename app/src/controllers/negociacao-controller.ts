@@ -4,6 +4,7 @@ import { logarTempoDeExecucao } from "../decorators/logar-tempo-de-execucao.js";
 import { DiasDaSemana } from "../enums/dias-da-semana.js";
 import { Negociacao } from "../models/negociacao.js"
 import { Negociacoes } from "../models/negociacoes.js";
+import { NegociacoesService } from "../services/negociacao-service.js";
 import { MensagemView } from "../views/mensagem-view.js";
 import { NegociacoesView } from "../views/negociacoes-view.js";
 
@@ -17,6 +18,7 @@ export class NegociacaoController {
   private _negociacoes = new Negociacoes();
   private _negociacoes_view = new NegociacoesView('#negociacoesView');
   private _mensagem_view = new MensagemView('#mensagemView');
+  private _negociacoes_servico = new NegociacoesService;
 
   constructor() {
     this._atualizaView();
@@ -38,6 +40,16 @@ export class NegociacaoController {
     } else {
       this._mensagem_view.update('Apenas negociações em dias úteis são aceitas.');
     }
+  }
+
+  public importaDados(): void {
+    this._negociacoes_servico.obterNegociacoes()
+      .then((negociacoes: Array<Negociacao>) => {
+        for (const negociacao of negociacoes) {
+          this._negociacoes.adiciona(negociacao);
+        }
+        this._negociacoes_view.update(this._negociacoes);
+      });
   }
 
   private _limparFormulario(): void {
