@@ -5,6 +5,7 @@ import { DiasDaSemana } from "../enums/dias-da-semana.js";
 import { Negociacao } from "../models/negociacao.js"
 import { Negociacoes } from "../models/negociacoes.js";
 import { NegociacoesService } from "../services/negociacao-service.js";
+import { imprimir } from "../utils/imprimir.js";
 import { MensagemView } from "../views/mensagem-view.js";
 import { NegociacoesView } from "../views/negociacoes-view.js";
 
@@ -35,6 +36,7 @@ export class NegociacaoController {
     if (negociacao.data.getDay() > DiasDaSemana.DOMINGO && negociacao.data.getDay() < DiasDaSemana.SABADO) {
       this._negociacoes.adiciona(negociacao);
       this._atualizaView();
+      imprimir(negociacao, this._negociacoes);
       this._limparFormulario();
       this._input_data.focus(); // Coloca focus no input da data quano acaba de atualilizar a view
     } else {
@@ -43,7 +45,13 @@ export class NegociacaoController {
   }
 
   public importaDados(): void {
-    this._negociacoes_servico.obterNegociacoes()
+    this._negociacoes_servico
+      .obterNegociacoes()
+      .then((negociacoes_importadas: Array<Negociacao>) => {
+        return negociacoes_importadas.filter((negociacao_importada: Negociacao) => {
+          return !this._negociacoes.list().some((negociacao: Negociacao) => negociacao.ehIgual(negociacao_importada));
+        });
+      })
       .then((negociacoes: Array<Negociacao>) => {
         for (const negociacao of negociacoes) {
           this._negociacoes.adiciona(negociacao);
